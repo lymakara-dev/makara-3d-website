@@ -45,7 +45,7 @@ function App() {
 
       {/* MAIN */}
       <main className="flex-1 md:flex">
-        <section className="md:w-1/2 h-[70vh] md:h-screen">
+        <section className="md:w-1/2 h-[70vh] md:h-screen ">
           <ThreeScene mode={mode} />
         </section>
 
