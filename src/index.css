@@ -33,6 +33,112 @@ body {
   overflow-x: hidden;
 }
 
+/* ===================================================
+   LIGHT MODE OVERRIDES
+   =================================================== */
+[data-theme="light"] {
+  --void:        #f5f4ff;
+  --deep:        #eceaff;
+  --surface:     #ffffff;
+  --text-bright: #0d0b26;
+  --text-mid:    #4a4270;
+  --text-dim:    #a09cc0;
+}
+
+[data-theme="light"] body {
+  background: var(--void);
+  color: var(--text-bright);
+}
+
+/* Hide particle canvas — additive blending doesn't work on light bg */
+[data-theme="light"] .three-bg {
+  opacity: 0;
+}
+
+/* Navbar */
+[data-theme="light"] .nova-nav {
+  background: linear-gradient(to bottom, rgba(245, 244, 255, 0.96), transparent);
+}
+
+[data-theme="light"] .nova-logo {
+  color: var(--text-bright);
+}
+
+/* Section dividers */
+[data-theme="light"] .nova-section {
+  border-top-color: rgba(100, 80, 200, 0.1);
+}
+
+[data-theme="light"] .nova-footer {
+  border-top-color: rgba(100, 80, 200, 0.1);
+}
+
+/* Cards */
+[data-theme="light"] .nova-card {
+  background: #ffffff;
+  border-color: rgba(100, 80, 200, 0.1);
+  box-shadow: 0 2px 20px rgba(100, 80, 200, 0.06);
+}
+[data-theme="light"] .nova-card:hover {
+  border-color: rgba(100, 80, 200, 0.18);
+  box-shadow: 0 8px 40px rgba(100, 80, 200, 0.1);
+}
+
+/* Skill tags */
+[data-theme="light"] .nova-skill-tag {
+  background: rgba(77, 100, 255, 0.05);
+  border-color: rgba(77, 100, 255, 0.16);
+  color: var(--text-mid);
+}
+[data-theme="light"] .nova-skill-tag:hover {
+  color: var(--glow-violet);
+  border-color: rgba(162, 89, 255, 0.35);
+  background: rgba(162, 89, 255, 0.06);
+}
+
+/* Side map */
+[data-theme="light"] .sidemap-item--active .sidemap-dot {
+  box-shadow: 0 0 8px rgba(0, 200, 180, 0.6);
+}
+
+/* Ghost button on light bg */
+[data-theme="light"] .btn-nova-ghost {
+  border-color: rgba(74, 66, 112, 0.3);
+  color: var(--text-mid);
+}
+[data-theme="light"] .btn-nova-ghost:hover {
+  border-color: var(--text-mid);
+  color: var(--text-bright);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(77, 159, 255, 0.2);
+  color: var(--text-mid);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--glow-teal);
+  color: var(--glow-teal);
+  background: rgba(0, 255, 224, 0.06);
+}
+[data-theme="light"] .theme-toggle {
+  border-color: rgba(100, 80, 200, 0.2);
+  color: var(--text-mid);
+}
+[data-theme="light"] .theme-toggle:hover {
+  border-color: var(--glow-violet);
+  color: var(--glow-violet);
+  background: rgba(162, 89, 255, 0.06);
+}
+
 /* Hide system cursor on pointer devices — custom cursor handles it */
 @media (pointer: fine) {
   * { cursor: none !important; }

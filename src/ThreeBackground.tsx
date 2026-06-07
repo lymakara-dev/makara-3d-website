@@ -145,11 +145,13 @@ export default function ThreeBackground() {
   return (
     <div
       ref={mountRef}
+      className="three-bg"
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 0,
         pointerEvents: 'none',
+        transition: 'opacity 0.6s ease',
       }}
     />
   );
