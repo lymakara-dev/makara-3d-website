@@ -37,6 +37,7 @@ export default function SideMap() {
   return (
     <nav
       aria-label="Page sections"
+      className="sidemap-nav"
       style={{
         position: "fixed",
         right: "28px",

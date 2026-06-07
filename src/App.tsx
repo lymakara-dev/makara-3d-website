@@ -20,8 +20,8 @@ function SunIcon() {
       <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
       <line x1="1"  y1="12" x2="3"  y2="12" />
       <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78"  x2="5.64" y2="18.36"  />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"  />
+      <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36" />
+      <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"  />
     </svg>
   );
 }
@@ -34,10 +34,37 @@ function MoonIcon() {
   );
 }
 
+function HamburgerIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <line x1="2" y1="4"  x2="16" y2="4"  />
+      <line x1="2" y1="9"  x2="16" y2="9"  />
+      <line x1="2" y1="14" x2="16" y2="14" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <line x1="3" y1="3" x2="15" y2="15" />
+      <line x1="15" y1="3" x2="3" y2="15" />
+    </svg>
+  );
+}
+
+const NAV_LINKS = [
+  { href: "#skills",     label: "Skills"      },
+  { href: "#experience", label: "Experience"  },
+  { href: "#projects",   label: "Projects"    },
+  { href: "#contact",    label: "Contact"     },
+];
+
 function App() {
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem("theme") as Theme) || "dark";
   });
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Apply theme to <html> and persist
   useEffect(() => {
@@ -45,7 +72,21 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+  const closeMenu   = () => setMenuOpen(false);
 
   // Scroll reveal via IntersectionObserver
   useEffect(() => {
@@ -119,75 +160,100 @@ function App() {
 
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
-      {/* Custom cursor */}
+      {/* Custom cursor (desktop only via CSS) */}
       <div id="cursor-dot"  className="cursor-dot"  />
       <div id="cursor-ring" className="cursor-ring" />
 
-      {/* Fixed particle background — hidden in light mode via CSS */}
+      {/* Fixed particle background */}
       <ThreeBackground />
 
-      {/* Side section map */}
+      {/* Side map (hidden on mobile via CSS) */}
       <SideMap />
+
+      {/* ── MOBILE FULL-SCREEN MENU ──────────────── */}
+      {menuOpen && (
+        <div className="mobile-menu" role="dialog" aria-modal="true">
+          <nav className="mobile-menu__links">
+            {NAV_LINKS.map(({ href, label }) => (
+              <a
+                key={href}
+                href={href}
+                className="mobile-menu__link"
+                onClick={closeMenu}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+
+          <a
+            href="/LYMAKARA-CV.pdf"
+            download
+            className="btn-nova-primary"
+            onClick={closeMenu}
+          >
+            Download CV
+          </a>
+        </div>
+      )}
 
       {/* ── NAVBAR ─────────────────────────────── */}
       <nav className="nova-nav">
         <a href="#" className="nova-logo">
           LY MAKAR<span>A</span>
         </a>
-        <div className="nova-nav-links">
-          <a href="#skills"     className="nova-nav-link">Skills</a>
-          <a href="#experience" className="nova-nav-link">Experience</a>
-          <a href="#projects"   className="nova-nav-link">Projects</a>
-          <a href="#contact"    className="nova-nav-link">Contact</a>
 
-          {/* Theme toggle */}
+        {/* Desktop links */}
+        <div className="nova-nav-links">
+          {NAV_LINKS.map(({ href, label }) => (
+            <a key={href} href={href} className="nova-nav-link">{label}</a>
+          ))}
           <button
             className="theme-toggle"
             onClick={toggleTheme}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            title={theme === "dark" ? "Light mode" : "Dark mode"}
           >
             {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </button>
-
           <a href="/LYMAKARA-CV.pdf" download className="btn-nova-nav">
             Resume
           </a>
         </div>
+
+        {/* Mobile controls */}
+        <div className="nova-nav-mobile">
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+          </button>
+          <button
+            className={`hamburger-btn${menuOpen ? " hamburger-btn--open" : ""}`}
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <CloseIcon /> : <HamburgerIcon />}
+          </button>
+        </div>
       </nav>
 
-      {/* ── HERO — full viewport, split layout ─── */}
-      <div
-        id="hero"
-        style={{
-          position: "relative",
-          zIndex: 1,
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "row",
-          paddingTop: "80px",
-        }}
-      >
-        {/* Left: 3D Canvas — transparent bg adapts to theme */}
-        <section style={{ width: "50%", minHeight: "calc(100vh - 80px)" }}>
+      {/* ── HERO ─────────────────────────────────── */}
+      <div id="hero" className="hero-layout">
+        {/* Left: 3D Canvas */}
+        <section className="hero-canvas">
           <ThreeScene theme={theme} />
         </section>
 
         {/* Right: Hero content */}
-        <aside
-          style={{
-            width: "50%",
-            display: "flex",
-            alignItems: "center",
-            padding: "48px",
-            backdropFilter: "blur(2px)",
-          }}
-        >
+        <aside className="hero-content">
           <Hero />
         </aside>
       </div>
 
-      {/* ── CONTENT SECTIONS ────────────────────── */}
+      {/* ── CONTENT SECTIONS ─────────────────────── */}
       <div style={{ position: "relative", zIndex: 1 }}>
         <Skills />
         <ExperienceList />
@@ -195,13 +261,12 @@ function App() {
         <Contact />
       </div>
 
-      {/* ── FOOTER ──────────────────────────────── */}
+      {/* ── FOOTER ───────────────────────────────── */}
       <footer
         className="nova-footer"
         style={{
           position: "relative",
           zIndex: 1,
-          padding: "32px 48px",
           textAlign: "center",
           fontSize: "11px",
           color: "var(--text-dim)",
