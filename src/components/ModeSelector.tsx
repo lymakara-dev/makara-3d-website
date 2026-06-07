@@ -6,39 +6,62 @@ type Props = {
 };
 
 const ICONS: Record<ModeKey, string> = {
-  light: "☀️",
-  dark: "🌙",
-  aurora: "🌈",
-  snow: "❄️",
-  fireflies: "✨",
-  galaxy: "🌌",
-  fog: "💨",
+  light:      "☀️",
+  dark:       "🌙",
+  aurora:     "🌈",
+  snow:       "❄️",
+  fireflies:  "✨",
+  galaxy:     "🌌",
+  fog:        "💨",
 };
 
 export default function ModeSelector({ value, onChange }: Props) {
   return (
-    <div className="fixed right-6 bottom-6 z-50">
-      <div className="flex flex-col gap-2 items-center">
-        {MODES.map((m) => {
-          const active = m === value;
-          return (
-            <button
-              key={m}
-              onClick={() => onChange(m)}
-              className={`w-12 h-12 rounded-full flex items-center justify-center text-lg shadow-lg
-                transition-transform duration-200
-                ${active ? "scale-110 ring-4 ring-sky-300/30" : "hover:scale-105"}
-                ${active ? "bg-sky-500 text-white" : "bg-white/6 text-white"}
-              `}
-              title={m}
-            >
-              <span style={{ filter: active ? "drop-shadow(0 4px 8px rgba(59,130,246,0.35))" : "none" }}>
-                {ICONS[m]}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+    <div
+      style={{
+        position: "fixed",
+        right: "24px",
+        bottom: "24px",
+        zIndex: 50,
+        display: "flex",
+        flexDirection: "column",
+        gap: "8px",
+        alignItems: "center",
+      }}
+    >
+      {MODES.map((m) => {
+        const active = m === value;
+        return (
+          <button
+            key={m}
+            onClick={() => onChange(m)}
+            title={m}
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              background: active
+                ? "rgba(0, 255, 224, 0.12)"
+                : "rgba(13, 11, 38, 0.75)",
+              border: active
+                ? "1px solid var(--glow-teal)"
+                : "1px solid rgba(77, 159, 255, 0.12)",
+              boxShadow: active
+                ? "0 0 20px rgba(0, 255, 224, 0.2), inset 0 0 12px rgba(0, 255, 224, 0.05)"
+                : "none",
+              transform: active ? "scale(1.12)" : "scale(1)",
+              transition: "all 0.2s ease",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            {ICONS[m]}
+          </button>
+        );
+      })}
     </div>
   );
 }

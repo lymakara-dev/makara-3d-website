@@ -2,25 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import Starfield from "./components/particles/Starfield";
-import Snow from "./components/particles/Snow";
-import Fireflies from "./components/particles/Fireflies";
-import InteractiveBox from "./components/InteractiveBox";
-import type { ModeKey } from "./modes";
 
-type Props = { mode: ModeKey };
-
-function SceneLighting({ mode }: { mode: ModeKey }) {
-  // Return different light setups depending on mode
-  if (mode === "light" || mode === "aurora") {
-    return (
-      <>
-        <ambientLight intensity={0.9} />
-        <directionalLight position={[5, 10, 5]} intensity={0.9} />
-      </>
-    );
-  }
-  // dark-family modes
+function SceneLighting() {
   return (
     <>
       <ambientLight intensity={0.35} color={new THREE.Color("#a3e3ff")} />
@@ -41,14 +24,13 @@ function CameraRig({
   scroll: number;
 }) {
   const { camera } = useThree();
-  useFrame((_) => {
+  useFrame(() => {
     const smooth = 0.08;
     const targetZ = 4 + scroll * 3;
     const targetY = 1.5 - scroll * 0.8;
     camera.position.z += (targetZ - camera.position.z) * smooth;
     camera.position.y += (targetY - camera.position.y) * smooth;
 
-    // mouse parallax
     const targetX = mouse.x * 0.8;
     const targetXX = camera.position.x + (targetX - camera.position.x) * 0.08;
     camera.position.x += (targetXX - camera.position.x) * 0.08;
@@ -57,7 +39,7 @@ function CameraRig({
   return null;
 }
 
-export default function ThreeScene({ mode }: Props) {
+export default function ThreeScene() {
   const mouse = useRef(new THREE.Vector2(0, 0));
   const scrollRef = useRef(0);
 
@@ -81,30 +63,10 @@ export default function ThreeScene({ mode }: Props) {
 
   return (
     <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
-      {/* Lighting */}
-      <SceneLighting mode={mode} />
-
-      {/* Fog for fog mode */}
-      <fog
-        attach="fog"
-        args={mode === "fog" ? ["#071026", 3, 10] : ["#071026", 100, 200]}
-      />
-
-      {/* camera rig reads mouse and scroll */}
+      <SceneLighting />
+      <fog attach="fog" args={["#03020a", 100, 200]} />
       <CameraRig mouse={mouse.current} scroll={scrollRef.current} />
 
-      {/* Ambient scene objects */}
-      <group position={[0, -1, 0]}>
-        <InteractiveBox position={[-1.6, 0, 0]} />
-        <InteractiveBox position={[1.6, 0, 0]} />
-      </group>
-
-      {/* Mode-specific visual systems */}
-      {mode === "galaxy" && <Starfield count={1200} />}
-      {mode === "snow" && <Snow count={600} />}
-      {mode === "fireflies" && <Fireflies count={60} />}
-
-      {/* Avatar model (sits center) */}
       <React.Suspense
         fallback={
           <Html center>
@@ -127,7 +89,6 @@ export default function ThreeScene({ mode }: Props) {
 function AvatarModel() {
   try {
     const gltf = useGLTF("/models/avatar.glb") as any;
-    // Slight color / emissive tweak when aurora
     return <primitive object={gltf.scene} scale={1.4} position={[0, -1, 0]} />;
   } catch {
     return null;

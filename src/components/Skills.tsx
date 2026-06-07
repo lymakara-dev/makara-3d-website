@@ -1,19 +1,24 @@
-import { cv } from '../data/cv'
+import { cv } from "../data/cv";
 
 export default function Skills() {
   return (
-    <section>
-      <h3 className="text-lg font-semibold">Skills</h3>
-      <div className="mt-3 flex flex-wrap gap-2">
-        {cv.skills.map((s) => (
+    <section id="skills" className="nova-section">
+      <div className="nova-label reveal">Technical Arsenal</div>
+      <h3 className="nova-title reveal" style={{ marginTop: "8px", marginBottom: "36px" }}>
+        STACK &amp; <em>TOOLS</em>
+      </h3>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+        {cv.skills.map((s, i) => (
           <span
             key={s}
-            className="text-xs px-3 py-1 bg-white/5 border border-white/6 rounded-full"
+            className="nova-skill-tag reveal"
+            style={{ transitionDelay: `${i * 0.04}s` }}
           >
             {s}
           </span>
         ))}
       </div>
     </section>
-  )
+  );
 }

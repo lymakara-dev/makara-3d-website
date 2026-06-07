@@ -1,23 +1,422 @@
 @import "tailwindcss";
 
-/* small extra styles */
+/* ===================================================
+   NOVA DARK DESIGN SYSTEM — CSS VARIABLES & GLOBALS
+   =================================================== */
+:root {
+  --void: #03020a;
+  --deep: #07051a;
+  --surface: #0d0b26;
+  --glow-blue: #4d9fff;
+  --glow-violet: #a259ff;
+  --glow-teal: #00ffe0;
+  --glow-pink: #ff4d9f;
+  --text-bright: #f0eeff;
+  --text-mid: #8c85b8;
+  --text-dim: #3d3866;
+}
+
 html,
 body,
 #root {
   height: 100%;
   margin: 0;
+  transition: background 0.8s ease, color 0.6s ease;
 }
 
 body {
-  background: linear-gradient(180deg, #071026 0%, #07182b 100%);
-  color: #e6eef8;
+  background: var(--void);
+  color: var(--text-bright);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
 }
 
-/* fallback UI for model placeholder */
+/* Hide system cursor on pointer devices — custom cursor handles it */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+/* ===================================================
+   SCROLL REVEAL
+   =================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===================================================
+   CUSTOM CURSOR
+   =================================================== */
+.cursor-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--glow-teal);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+  top: 0;
+  left: 0;
+}
+
+.cursor-ring {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(0, 255, 224, 0.6);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+  top: 0;
+  left: 0;
+}
+
+/* ===================================================
+   NAVBAR
+   =================================================== */
+.nova-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: linear-gradient(to bottom, rgba(3, 2, 10, 0.92), transparent);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nova-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: var(--text-bright);
+  text-decoration: none;
+}
+.nova-logo span {
+  color: var(--glow-teal);
+}
+
+.nova-nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nova-nav-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s ease;
+}
+.nova-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--glow-teal);
+  transition: width 0.3s ease;
+}
+.nova-nav-link:hover {
+  color: var(--glow-teal);
+}
+.nova-nav-link:hover::after {
+  width: 100%;
+}
+
+/* ===================================================
+   BUTTONS
+   =================================================== */
+.btn-nova-primary {
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  background: linear-gradient(135deg, var(--glow-teal), var(--glow-blue));
+  color: var(--void);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-nova-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 60px rgba(0, 255, 224, 0.25);
+}
+
+.btn-nova-ghost {
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  background: transparent;
+  color: var(--text-mid);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border: 1px solid var(--text-dim);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.btn-nova-ghost:hover {
+  color: var(--text-bright);
+  border-color: var(--text-mid);
+}
+
+.btn-nova-nav {
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  background: var(--glow-teal);
+  color: var(--void);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-nova-nav:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(0, 255, 224, 0.3);
+}
+
+/* ===================================================
+   SECTION TYPOGRAPHY
+   =================================================== */
+.nova-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--glow-violet);
+  display: block;
+}
+.nova-label::before {
+  content: '// ';
+}
+
+.nova-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(50px, 7vw, 100px);
+  line-height: 0.9;
+  color: var(--text-bright);
+  margin: 0;
+}
+.nova-title em {
+  font-style: italic;
+  -webkit-text-stroke: 2px var(--glow-violet);
+  color: transparent;
+}
+
+.nova-body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-mid);
+}
+
+/* ===================================================
+   HERO SECTION
+   =================================================== */
+.hero-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 9vw, 148px);
+  line-height: 0.88;
+  margin: 0;
+}
+
+.hero-line-1 {
+  display: block;
+  color: var(--text-bright);
+}
+
+.hero-line-2 {
+  display: block;
+  -webkit-text-stroke: 2px var(--glow-violet);
+  color: transparent;
+  font-style: italic;
+}
+
+.hero-line-3 {
+  display: block;
+  font-size: clamp(20px, 2.8vw, 48px);
+  background: linear-gradient(90deg, var(--glow-teal), var(--glow-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 8px;
+}
+
+/* ===================================================
+   CARDS
+   =================================================== */
+.nova-card {
+  background: var(--surface);
+  border: 1px solid rgba(77, 159, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.nova-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--glow-teal), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.nova-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(77, 159, 255, 0.2);
+}
+.nova-card:hover::before {
+  opacity: 1;
+}
+
+/* ===================================================
+   SKILL TAG
+   =================================================== */
+.nova-skill-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  background: rgba(77, 159, 255, 0.05);
+  border: 1px solid rgba(77, 159, 255, 0.15);
+  color: var(--text-mid);
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  display: inline-block;
+}
+.nova-skill-tag:hover {
+  color: var(--glow-teal);
+  border-color: rgba(0, 255, 224, 0.3);
+  background: rgba(0, 255, 224, 0.05);
+}
+
+/* ===================================================
+   SCROLL INDICATOR
+   =================================================== */
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.scroll-indicator__line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--glow-teal), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+
+/* ===================================================
+   SECTION DIVIDER
+   =================================================== */
+.nova-section {
+  position: relative;
+  z-index: 1;
+  padding: 96px 48px;
+  border-top: 1px solid rgba(77, 159, 255, 0.08);
+}
+
+/* ===================================================
+   SIDE MAP
+   =================================================== */
+.sidemap-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+.sidemap-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
+  white-space: nowrap;
+}
+
+.sidemap-dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Hover state */
+.sidemap-item:hover .sidemap-label {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--text-mid);
+}
+.sidemap-item:hover .sidemap-dot {
+  background: var(--text-mid);
+}
+
+/* Active state */
+.sidemap-item--active .sidemap-label {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--glow-teal);
+}
+.sidemap-item--active .sidemap-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--glow-teal);
+  box-shadow: 0 0 10px rgba(0, 255, 224, 0.7), 0 0 20px rgba(0, 255, 224, 0.3);
+}
+
+/* ===================================================
+   CARD PLACEHOLDER / R3F OVERLAY
+   =================================================== */
 .model-placeholder {
   width: 320px;
   height: 320px;
@@ -25,18 +424,19 @@ body {
   place-items: center;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.03),
-    rgba(255, 255, 255, 0.01)
+    rgba(77, 159, 255, 0.03),
+    rgba(162, 89, 255, 0.02)
   );
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(77, 159, 255, 0.08);
 }
 
-/* small card styles (non-tailwind) used by Html overlay in 3D */
 .r3f-card {
-  background: rgba(255, 255, 255, 0.04);
-  padding: 10px 12px;
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(13, 11, 38, 0.85);
+  padding: 10px 14px;
+  border: 1px solid rgba(77, 159, 255, 0.12);
+  backdrop-filter: blur(8px);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-mid);
 }
