@@ -4,8 +4,8 @@ const SECTIONS = [
   { id: "hero",       label: "Home" },
   { id: "skills",     label: "Skills" },
   { id: "experience", label: "Experience" },
-  { id: "projects",   label: "Projects" },
-  { id: "contact",    label: "Contact" },
+  { id: "projects", label: "Projects" },
+  { id: "contact",  label: "Contact"  },
 ];
 
 export default function SideMap() {
