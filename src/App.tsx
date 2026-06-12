@@ -7,6 +7,10 @@ import Contact from "./components/Contact";
 import Projects from "./components/Projects";
 import SideMap from "./components/SideMap";
 import ThreeBackground from "./ThreeBackground";
+import { type CursorStyle } from "./components/ControlPanel";
+import ContextMenu from "./components/ContextMenu";
+import { useSoundEffects } from "./hooks/useSoundEffects";
+import { useAmbientSound } from "./hooks/useAmbientSound";
 
 type Theme = "dark" | "light";
 
@@ -64,13 +68,27 @@ function App() {
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem("theme") as Theme) || "dark";
   });
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen,     setMenuOpen]     = useState(false);
+  const [ctxMenu,      setCtxMenu]      = useState<{ x: number; y: number } | null>(null);
+  const [cursorStyle,  setCursorStyle]  = useState<CursorStyle>(() => {
+    const saved = localStorage.getItem("cursorStyle");
+    if (!saved || saved === "dot") return "nova";
+    return saved as CursorStyle;
+  });
 
   // Apply theme to <html> and persist
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  // Apply cursor style class to <body> and persist
+  useEffect(() => {
+    const body = document.body;
+    body.classList.remove("cursor-nova", "cursor-dot", "cursor-glow", "cursor-system");
+    body.classList.add(`cursor-${cursorStyle}`);
+    localStorage.setItem("cursorStyle", cursorStyle);
+  }, [cursorStyle]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -84,6 +102,19 @@ function App() {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+
+  useSoundEffects();
+  const { state: soundState, toggle: soundToggle } = useAmbientSound();
+
+  // Suppress native context menu and show custom one
+  useEffect(() => {
+    const onCtx = (e: MouseEvent) => {
+      e.preventDefault();
+      setCtxMenu({ x: e.clientX, y: e.clientY });
+    };
+    document.addEventListener("contextmenu", onCtx);
+    return () => document.removeEventListener("contextmenu", onCtx);
+  }, []);
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
   const closeMenu   = () => setMenuOpen(false);
@@ -169,6 +200,19 @@ function App() {
 
       {/* Side map (hidden on mobile via CSS) */}
       <SideMap />
+
+      {/* Custom right-click context menu */}
+      {ctxMenu && (
+        <ContextMenu
+          x={ctxMenu.x}
+          y={ctxMenu.y}
+          onClose={() => setCtxMenu(null)}
+          soundState={soundState}
+          onSoundToggle={soundToggle}
+          cursorStyle={cursorStyle}
+          onCursorChange={setCursorStyle}
+        />
+      )}
 
       {/* ── MOBILE FULL-SCREEN MENU ──────────────── */}
       {menuOpen && (

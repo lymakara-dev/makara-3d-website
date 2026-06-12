@@ -704,6 +704,254 @@ body {
 }
 
 /* ===================================================
+   CURSOR STYLE VARIANTS
+   =================================================== */
+
+/* system — restore OS cursor, hide custom elements */
+body.cursor-system,
+body.cursor-system * { cursor: auto !important; }
+body.cursor-system .cursor-dot,
+body.cursor-system .cursor-ring { display: none !important; }
+
+/* glow — oversized pulsing orb */
+body.cursor-glow .cursor-dot {
+  width: 22px;
+  height: 22px;
+  background: var(--glow-teal);
+  box-shadow: 0 0 16px var(--glow-teal), 0 0 40px rgba(0, 255, 224, 0.4);
+  animation: glow-pulse 1.8s ease-in-out infinite;
+}
+body.cursor-glow .cursor-ring { display: none; }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 12px var(--glow-teal), 0 0 30px rgba(0, 255, 224, 0.3); }
+  50%       { box-shadow: 0 0 24px var(--glow-teal), 0 0 60px rgba(0, 255, 224, 0.5); }
+}
+
+/* ===================================================
+   CONTROL PANEL
+   =================================================== */
+.control-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 32px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(7, 5, 26, 0.75);
+  border: 1px solid rgba(77, 159, 255, 0.12);
+  backdrop-filter: blur(14px);
+  padding: 18px 16px;
+  min-width: 148px;
+}
+[data-theme="light"] .control-panel {
+  background: rgba(245, 244, 255, 0.82);
+  border-color: rgba(100, 80, 200, 0.14);
+}
+
+.control-panel__block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.control-panel__block .nova-label {
+  font-size: 9px;
+  letter-spacing: 5px;
+}
+
+/* ── Sound toggle ── */
+.sound-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(77, 159, 255, 0.05);
+  border: 1px solid rgba(77, 159, 255, 0.15);
+  padding: 8px 10px;
+  color: var(--text-dim);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  width: 100%;
+}
+.sound-toggle:hover {
+  border-color: rgba(77, 159, 255, 0.3);
+  color: var(--text-mid);
+}
+.sound-toggle--on {
+  border-color: rgba(0, 255, 224, 0.35);
+  color: var(--glow-teal);
+  background: rgba(0, 255, 224, 0.05);
+}
+.sound-toggle--on:hover {
+  border-color: rgba(0, 255, 224, 0.6);
+}
+
+.sound-toggle__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── Waveform animation ── */
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+.waveform-bar {
+  display: block;
+  width: 2px;
+  height: 4px;
+  background: var(--glow-teal);
+  border-radius: 1px;
+  animation: wave 0.9s ease-in-out infinite;
+}
+@keyframes wave {
+  0%, 100% { height: 3px;  opacity: 0.6; }
+  50%       { height: 13px; opacity: 1;   }
+}
+
+/* ── Cursor picker ── */
+.cursor-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.cursor-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px 6px;
+  background: rgba(77, 159, 255, 0.04);
+  border: 1px solid rgba(77, 159, 255, 0.1);
+  color: var(--text-dim);
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.cursor-option:hover {
+  border-color: rgba(77, 159, 255, 0.25);
+  color: var(--text-mid);
+}
+.cursor-option--active {
+  border-color: var(--glow-teal);
+  background: rgba(0, 255, 224, 0.06);
+  color: var(--glow-teal);
+}
+[data-theme="light"] .cursor-option--active {
+  border-color: var(--glow-violet);
+  background: rgba(162, 89, 255, 0.06);
+  color: var(--glow-violet);
+}
+
+.cursor-option__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Hide control panel on mobile */
+@media (max-width: 768px) {
+  .control-panel { display: none; }
+}
+
+/* ===================================================
+   CUSTOM CONTEXT MENU
+   =================================================== */
+.ctx-menu {
+  position: fixed;
+  z-index: 10000;
+  width: 192px;
+  background: rgba(8, 6, 24, 0.92);
+  border: 1px solid rgba(0, 255, 224, 0.18);
+  backdrop-filter: blur(20px);
+  padding: 6px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 224, 0.06);
+  animation: ctx-appear 0.12s ease;
+  transform-origin: top left;
+}
+@keyframes ctx-appear {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+[data-theme="light"] .ctx-menu {
+  background: rgba(245, 244, 255, 0.94);
+  border-color: rgba(162, 89, 255, 0.22);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(162, 89, 255, 0.08);
+}
+
+.ctx-menu__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 14px 3px;
+  margin: 0;
+}
+.ctx-menu__divider {
+  height: 1px;
+  background: rgba(77, 159, 255, 0.1);
+  margin: 5px 0;
+}
+[data-theme="light"] .ctx-menu__divider {
+  background: rgba(162, 89, 255, 0.12);
+}
+
+.ctx-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 14px;
+  background: none;
+  border: none;
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  position: relative;
+}
+.ctx-menu__item:hover {
+  background: rgba(0, 255, 224, 0.07);
+  color: var(--text-bright);
+}
+[data-theme="light"] .ctx-menu__item:hover {
+  background: rgba(162, 89, 255, 0.07);
+}
+.ctx-menu__item--active {
+  color: var(--glow-teal);
+}
+[data-theme="light"] .ctx-menu__item--active {
+  color: var(--glow-violet);
+}
+.ctx-menu__item--sound-on {
+  color: var(--glow-teal);
+}
+[data-theme="light"] .ctx-menu__item--sound-on {
+  color: var(--glow-violet);
+}
+
+.ctx-menu__symbol {
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.ctx-menu__check {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--glow-teal);
+}
+[data-theme="light"] .ctx-menu__check {
+  color: var(--glow-violet);
+}
+
+/* ===================================================
    CARD PLACEHOLDER / R3F OVERLAY
    =================================================== */
 .model-placeholder {
