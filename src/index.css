@@ -193,6 +193,18 @@ html.system-cursor * { cursor: auto !important; }
   left: 0;
 }
 
+/* screen blend mode renders invisible on light backgrounds — switch to a solid violet to match the light accent */
+[data-theme="light"] .cursor-dot,
+[data-theme="light"] .cursor-ring {
+  mix-blend-mode: normal;
+}
+[data-theme="light"] .cursor-dot {
+  background: var(--glow-violet);
+}
+[data-theme="light"] .cursor-ring {
+  border-color: rgba(162, 89, 255, 0.6);
+}
+
 /* Glow cursor mode */
 .cursor-dot.glow {
   width: 16px;
